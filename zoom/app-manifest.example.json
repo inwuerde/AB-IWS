@@ -1,0 +1,40 @@
+{
+  "manifest": {
+    "display_information": {
+      "display_name": "IWS Arbeitsblätter",
+      "description": "Digitale Arbeitsblätter zum Programm In Würde zu sich stehen. Ausfüllen und lokal speichern – in Zoom-Meetings und im Browser.",
+      "short_description": "IWS-Arbeitsblätter als Formulare mit lokaler Speicherung."
+    },
+    "oauth_information": {
+      "usage": "USER_OPERATION",
+      "development_redirect_uri": "https://YOUR-DOMAIN/auth.html",
+      "production_redirect_uri": "https://YOUR-DOMAIN/auth.html",
+      "oauth_allow_list": ["https://YOUR-DOMAIN"]
+    },
+    "features": {
+      "products": ["ZOOM_MEETING", "ZOOM_CHAT"],
+      "development_home_uri": "https://YOUR-DOMAIN/",
+      "production_home_uri": "https://YOUR-DOMAIN/",
+      "domain_allow_list": [
+        { "domain": "YOUR-DOMAIN", "explanation": "Hosting der IWS-App" },
+        { "domain": "appssdk.zoom.us", "explanation": "Zoom Apps SDK" }
+      ],
+      "in_client_feature": {
+        "zoom_app_api": {
+          "enable": true,
+          "zoom_app_apis": [
+            "getRunningContext",
+            "getUserContext",
+            "openUrl",
+            "shareApp",
+            "expandApp"
+          ]
+        },
+        "guest_mode": {
+          "enable": true,
+          "enable_test_guest_mode": true
+        }
+      }
+    }
+  }
+}
