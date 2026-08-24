@@ -1,0 +1,12 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' https://appssdk.zoom.us; connect-src 'self' https://appssdk.zoom.us; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; frame-ancestors 'self' https://*.zoom.us https://*.zoomdev.us https://*.zoom.com; object-src 'none'"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Cross-Origin-Resource-Policy = "cross-origin"
+    Strict-Transport-Security = "max-age=31536000"
