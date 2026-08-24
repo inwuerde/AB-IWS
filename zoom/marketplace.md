@@ -6,7 +6,7 @@ Eine Veröffentlichung im Zoom App Marketplace ist **kein Git-Push**. Zoom prüf
 
 1. Zoom-Konto mit Rolle **Zoom for developers** (Kontoinhaber oder Admin).
 2. App im [Zoom Marketplace Build-Flow](https://marketplace.zoom.us/) anlegen: **General App** mit Zoom Apps SDK.
-3. Öffentliche **HTTPS-URL** der laufenden App (empfohlen: Vercel oder Netlify wegen CSP-Headern; GitHub Pages funktioniert technisch, setzt aber keine `frame-ancestors`-Header).
+3. Öffentliche **HTTPS-URL** der laufenden App. Derzeit: https://thomaskarlrichter.github.io/AB-IWS/ (GitHub Pages). Für den Store sind Vercel oder Netlify besser, weil dort CSP `frame-ancestors` für `*.zoom.us` per HTTP-Header gesetzt werden kann.
 4. Live-URLs für Datenschutz, Nutzungsbedingungen und Support (in dieser App: `/#/datenschutz`, `/#/nutzungsbedingungen`, `/#/support`).
 
 ## Marketplace-Konfiguration
@@ -15,8 +15,8 @@ Eine Veröffentlichung im Zoom App Marketplace ist **kein Git-Push**. Zoom prüf
 | --- | --- |
 | App-Name | IWS Arbeitsblätter |
 | App-Typ | General App / Zoom App |
-| Home URL | `https://<host>/` |
-| Redirect URL for OAuth | `https://<host>/auth.html` |
+| Home URL | `https://thomaskarlrichter.github.io/AB-IWS/` |
+| Redirect URL for OAuth | `https://thomaskarlrichter.github.io/AB-IWS/auth.html` |
 | Domain allow list | Ihr Host + `appssdk.zoom.us` |
 | Scopes | `zoomapp:inmeeting` (optional `zoomapp:inwebinar`) |
 | SDK APIs | `getRunningContext`, `getUserContext`, `openUrl`, `shareApp`, `expandApp` |
