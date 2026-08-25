@@ -13,6 +13,41 @@
       name="description"
       content="Digitale, lokal gespeicherte Arbeitsblätter zum IWS-Programm In Würde zu sich stehen."
     />
+        <script>
+      (function () {
+        function applySize() {
+          var h = window.innerHeight || document.documentElement.clientHeight || 640
+          if (h < 80) h = 640
+          document.documentElement.style.setProperty('--app-h', h + 'px')
+        }
+        applySize()
+        window.addEventListener('resize', applySize)
+        if (/ZoomWebKit|ZoomApps/i.test(navigator.userAgent || '')) {
+          document.documentElement.classList.add('in-zoom')
+        }
+      })()
+    </script>
+    <script>
+      (function () {
+        function configure() {
+          var sdk = window.zoomSdk
+          if (!sdk || typeof sdk.config !== 'function') return
+          window.__zoomConfigPromise = sdk.config({
+            version: '0.16',
+            capabilities: [
+              'shareApp', 'getRunningContext', 'getUserContext', 'getMeetingContext',
+              'getMeetingUUID', 'postMessage', 'onMessage', 'expandApp', 'openUrl', 'getSupportedJsApis',
+            ],
+            popoutSize: { width: 960, height: 640 },
+          })
+        }
+        if (window.zoomSdk) { configure(); return }
+        var s = document.createElement('script')
+        s.src = 'https://appssdk.zoom.us/sdk.min.js'
+        s.onload = configure
+        document.head.appendChild(s)
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>
