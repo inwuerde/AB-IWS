@@ -54,3 +54,7 @@ export async function expandInZoom(): Promise<void> {
 export async function shareInZoom(): Promise<void> {
   await window.zoomSdk?.shareApp?.()
 }
+
+export async function openInSystemBrowser(url: string): Promise<void> {
+  await window.zoomSdk?.openUrl?.({ url })
+}
