@@ -27,3 +27,6 @@ IWS_Arbeitsbuch_Erwachsene_April2024.pdf
 *.njsproj
 *.sln
 *.sw?
+
+.env
+

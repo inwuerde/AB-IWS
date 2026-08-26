@@ -6,7 +6,7 @@ Digitale Formulare zu allen Arbeitsblättern des IWS-Handbuchs
 
 Die App folgt dem Layout des Arbeitsbuchs (Grün-/Limetten-Bänder, Abschnittsüberschriften, Vor-/Nachteil-Tabellen, 7-Punkte-Skalen). Ausgefüllte Blätter bleiben **im localStorage des Browsers** – ohne Konto und ohne Server-Upload der Inhalte.
 
-Repository: [https://github.com/inwuerde/AB-IWS](https://github.com/inwuerde/AB-IWS)
+Repository: [https://github.com/inwuerde/AB-IWS](https://github.com/inwuerde/AB-IWS) · Live: [https://thomaskarlrichter.github.io/AB-IWS/](https://thomaskarlrichter.github.io/AB-IWS/)
 
 ## Funktionen
 
@@ -80,7 +80,7 @@ Die App lädt das [Zoom Apps SDK](https://appssdk.zoom.us/) und ruft `config` mi
 
 **Im Zoom App Store veröffentlichen** (manueller Schritt im Zoom-Konto):
 
-1. App öffentlich per HTTPS bereitstellen (Vercel/Netlify empfohlen, damit CSP `frame-ancestors` für `*.zoom.us` gesetzt wird). GitHub Pages: `https://inwuerde.github.io/AB-IWS/`.
+1. App öffentlich per HTTPS bereitstellen (Vercel/Netlify empfohlen, damit CSP `frame-ancestors` für `*.zoom.us` gesetzt wird). Aktuelle GitHub-Pages-URL: `https://thomaskarlrichter.github.io/AB-IWS/` (nach Merge von PR #1 zusätzlich `https://inwuerde.github.io/AB-IWS/`, sobald Pages dort aktiviert ist).
 2. Unter [marketplace.zoom.us](https://marketplace.zoom.us/) eine **General App** mit Zoom Apps SDK anlegen.
 3. Home URL, OAuth-Redirect (`/auth.html`), Domain-Allowlist und Gastmodus eintragen.
 4. Datenschutz, Nutzungsbedingungen und Support verlinken.
