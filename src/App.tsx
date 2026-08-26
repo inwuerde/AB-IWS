@@ -7,7 +7,7 @@ import {
   loadAll,
   sheetHasContent,
 } from './storage'
-import { expandInZoom, initZoom, shareInZoom, type ZoomState } from './zoom'
+import { expandInZoom, initZoom, openInSystemBrowser, shareInZoom, type ZoomState } from './zoom'
 import { Home } from './components/Home'
 import { Glossary, Privacy, Support, Terms } from './components/Pages'
 import { WorksheetView } from './components/WorksheetView'
@@ -41,11 +41,36 @@ function toHash(route: Route): string {
   return `#/ab/${encodeURIComponent(route.id)}`
 }
 
+function downloadJsonFile(json: string, filename: string): void {
+  const blob = new Blob([json], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  a.rel = 'noopener'
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  window.setTimeout(() => URL.revokeObjectURL(url), 1500)
+}
+
+async function copyText(text: string): Promise<boolean> {
+  try {
+    await navigator.clipboard.writeText(text)
+    return true
+  } catch {
+    return false
+  }
+}
+
 export default function App() {
   const [route, setRoute] = useState<Route>(() => parseHash(window.location.hash))
   const [tick, setTick] = useState(0)
   const [navOpen, setNavOpen] = useState(false)
   const [zoom, setZoom] = useState<ZoomState>({ available: false, inZoom: false })
+  const [dataPanel, setDataPanel] = useState<'closed' | 'export' | 'import'>('closed')
+  const [pasteValue, setPasteValue] = useState('')
+  const [dataMsg, setDataMsg] = useState<string | null>(null)
 
   useEffect(() => {
     const onHash = () => {
@@ -68,6 +93,35 @@ export default function App() {
 
   const onSaved = useCallback(() => setTick((n) => n + 1), [])
   const store = useMemo(() => loadAll(), [tick])
+
+  const applyImport = useCallback((text: string) => {
+    try {
+      importJson(text)
+      setTick((n) => n + 1)
+      setPasteValue('')
+      setDataPanel('closed')
+      setDataMsg(null)
+      window.alert('Backup importiert.')
+    } catch {
+      const msg = 'Import fehlgeschlagen. Bitte gültiges JSON verwenden.'
+      setDataMsg(msg)
+      window.alert(msg)
+    }
+  }, [])
+
+  const onExport = useCallback(async () => {
+    const json = exportJson()
+    downloadJsonFile(json, 'iws-arbeitsblaetter.json')
+    if (!zoom.inZoom) return
+    const copied = await copyText(json)
+    setPasteValue(json)
+    setDataPanel('export')
+    setDataMsg(
+      copied
+        ? 'Zoom blockiert Datei-Downloads. Der JSON-Text liegt in der Zwischenablage.'
+        : 'Zoom blockiert Datei-Downloads. Bitte den JSON-Text kopieren oder die App im Systembrowser öffnen.',
+    )
+  }, [zoom.inZoom])
 
   const sheet = route.name === 'sheet' ? getWorksheet(route.id) : undefined
 
@@ -136,42 +190,70 @@ export default function App() {
           ))}
 
           <h2>Daten</h2>
-          <button
-            type="button"
-            onClick={() => {
-              const blob = new Blob([exportJson()], { type: 'application/json' })
-              const url = URL.createObjectURL(blob)
-              const a = document.createElement('a')
-              a.href = url
-              a.download = 'iws-arbeitsblaetter.json'
-              a.click()
-              URL.revokeObjectURL(url)
-            }}
-          >
+          <button type="button" onClick={() => void onExport()}>
             Daten exportieren
           </button>
           <label className="import-label">
             Daten importieren
             <input
               type="file"
-              accept="application/json"
-              hidden
+              accept=".json,application/json"
+              className="visually-hidden"
               onChange={(e) => {
                 const file = e.target.files?.[0]
                 if (!file) return
-                void file.text().then((text) => {
-                  try {
-                    importJson(text)
-                    setTick((n) => n + 1)
-                    alert('Backup importiert.')
-                  } catch {
-                    alert('Import fehlgeschlagen. Bitte eine gültige JSON-Datei wählen.')
-                  }
-                })
+                void file.text().then((text) => applyImport(text))
                 e.target.value = ''
               }}
             />
           </label>
+          {zoom.inZoom ? (
+            <>
+              <button
+                type="button"
+                onClick={() => {
+                  setDataMsg('Zoom öffnet oft keinen Dateidialog. JSON hier einfügen.')
+                  setPasteValue('')
+                  setDataPanel('import')
+                }}
+              >
+                JSON einfügen
+              </button>
+              <button
+                type="button"
+                onClick={() => void openInSystemBrowser(window.location.href)}
+              >
+                Im Systembrowser öffnen
+              </button>
+            </>
+          ) : null}
+          {dataPanel !== 'closed' ? (
+            <div className="data-transfer">
+              {dataMsg ? <p className="data-msg">{dataMsg}</p> : null}
+              <textarea
+                value={pasteValue}
+                readOnly={dataPanel === 'export'}
+                onChange={(e) => setPasteValue(e.target.value)}
+                onFocus={(e) => e.target.select()}
+                spellCheck={false}
+                aria-label={dataPanel === 'export' ? 'Export-JSON' : 'Import-JSON'}
+              />
+              <div className="data-transfer-actions">
+                {dataPanel === 'export' ? (
+                  <button type="button" onClick={() => void copyText(pasteValue)}>
+                    Kopieren
+                  </button>
+                ) : (
+                  <button type="button" onClick={() => applyImport(pasteValue)}>
+                    Importieren
+                  </button>
+                )}
+                <button type="button" onClick={() => setDataPanel('closed')}>
+                  Schließen
+                </button>
+              </div>
+            </div>
+          ) : null}
           <button
             type="button"
             onClick={() => {
